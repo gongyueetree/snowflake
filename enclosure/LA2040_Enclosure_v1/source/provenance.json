@@ -1,0 +1,13 @@
+{
+  "original_filename": "LA_rp2040.kicad_pcb",
+  "original_pcb_sha256": "c35732231607a3e55649da23b125c08596caf0cc0db8bba5a81b25a0f65df603",
+  "original_bounds_mm": [
+    107,
+    68.75,
+    142,
+    85.25
+  ],
+  "pcb_thickness_mm": 1.6,
+  "cad_transform": "X = KiCad X - 107; Y = 85.25 - KiCad Y; PCB bottom Z=4.0, top Z=5.6",
+  "engineering_source": "User-provided LA_RP2040.zip"
+}

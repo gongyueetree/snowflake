@@ -1,0 +1,9 @@
+Mode: built-in image_gen, edit of the previous product concept render.
+References: original product-render.png and corrected docs/rp2040-markings-fixed.jpg.
+
+Preserve three white snowflake LED PCBs, their branch layouts, mint/cyan/lavender illumination, charcoal desk and product photography composition. Update only the small green LA RP2040 controller to match the corrected engineering reference. Main chip uses a Raspberry Pi logo and RP2-B2 YY/WW / XXXXXX.00 TTT reference markings, rotated 90 degrees counterclockwise with the package, and pin-one dot toward the lower-left. Flash part label is GD25Q64, rotated with its package. These are illustrative reference markings, not fitted-device batch data.
+
+Replace the right connector with exactly six positions across the board's short axis, with two rows of six gold pins extending horizontally along the long axis. The connector straddles the PCB edge, with the lower row mostly occluded. Preserve physical board scale, solder detail and all other objects. No cables, enclosures, advertising text or watermark.
+
+Two edits were generated; the second corrected the pin count and chip-marking orientation. Final selected image: exec-8d170e1f-1f53-4483-8c81-1b43fb62fa5d.png.
+This asset is an AI product concept render, not a dimensionally exact assembly or a photograph. Use the engineering view for exact geometry.

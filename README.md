@@ -2,6 +2,10 @@
 
 面向非程序员的雪花灯拼接、灯效仿真、Gemini 自然语言创作与 RP2040 UF2 下载工具。
 
+## 部署到 Vercel
+
+仓库已包含 `vercel.json`，导入仓库时使用 Other 框架、根目录默认、输出目录 `dist`。详细步骤及 Gemini 密钥使用方式见 [Vercel 部署指南](docs/VERCEL_DEPLOY.md)。
+
 ## 本地运行与验证
 
 ```sh

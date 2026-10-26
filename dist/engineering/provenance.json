@@ -1,0 +1,30 @@
+[
+  {
+    "id": "rp2040",
+    "pcb": {
+      "sha256": "c35732231607a3e55649da23b125c08596caf0cc0db8bba5a81b25a0f65df603",
+      "components": 34,
+      "tracks": 347,
+      "vias": 66
+    },
+    "schematic": {
+      "symbols": 55,
+      "wires": 183,
+      "sha256": "0de25a6f3cdb25597b61baad8976059e14bb55cd2fc0c19cf491bddda0b64890"
+    }
+  },
+  {
+    "id": "snowflake",
+    "pcb": {
+      "sha256": "c529fc0c5288ea3b4f5f171e46817cfdf658846b3f576883167cce4254dafa62",
+      "components": 58,
+      "tracks": 428,
+      "vias": 92
+    },
+    "schematic": {
+      "symbols": 58,
+      "wires": 284,
+      "sha256": "63d7a01c6b246e54bfb1262beea8e7dc4f211c75f6d3c2321bf6ef89b5b93451"
+    }
+  }
+]

@@ -1,0 +1,529 @@
+{
+  "units": "mm",
+  "parameters": {
+    "pcb_length": 35.0,
+    "pcb_width": 16.5,
+    "pcb_thickness": 1.6,
+    "pcb_xy_clearance": 0.3,
+    "pcb_bottom": 4.0,
+    "outer_x_min": -2.2,
+    "outer_x_max": 36.2,
+    "outer_y_min": -4.6,
+    "outer_y_max": 21.1,
+    "outer_radius": 2.0,
+    "floor": 1.4,
+    "seam_z": 6.4,
+    "height": 11.2,
+    "roof": 1.4,
+    "screw_x": 17.5,
+    "screw_y": [
+      -2.45,
+      18.95
+    ],
+    "screw_pilot_diameter": 1.7,
+    "screw_clearance_diameter": 2.3,
+    "pilot_bottom": 2.4,
+    "usb_cut_y": [
+      2.15,
+      14.35
+    ],
+    "usb_cut_z": [
+      4.1,
+      10.3
+    ],
+    "header_cut_y": [
+      -0.3,
+      16.8
+    ],
+    "header_cut_z": [
+      1.45,
+      7.5
+    ],
+    "boot_access_diameter": 3.2,
+    "led_window_diameter": 2.4,
+    "lid_retainer_gap": 0.2,
+    "text_depth": 0.28
+  },
+  "board_bounds_kicad": [
+    107.0,
+    68.75,
+    142.0,
+    85.25
+  ],
+  "feature_centers_xy": {
+    "J1": [
+      3.379000000000005,
+      8.25
+    ],
+    "J2": [
+      30.0,
+      8.25
+    ],
+    "SW4": [
+      9.5,
+      13.75
+    ],
+    "D5": [
+      3.0,
+      14.742999999999995
+    ],
+    "D1": [
+      3.0,
+      1.6809999999999974
+    ]
+  },
+  "parts": {
+    "base": {
+      "valid": true,
+      "solids": 1,
+      "volume_mm3": 3186.4486629621015,
+      "size_mm": [
+        38.400000000000006,
+        25.700000000000003,
+        6.4
+      ]
+    },
+    "lid": {
+      "valid": true,
+      "solids": 1,
+      "volume_mm3": 2466.8993386992493,
+      "size_mm": [
+        38.40000020000001,
+        25.700000200000005,
+        5.450000099999999
+      ]
+    },
+    "fit_collar": {
+      "valid": true,
+      "solids": 1,
+      "volume_mm3": 1380.9924174406397,
+      "size_mm": [
+        9.200000000000001,
+        25.700000000000003,
+        11.2
+      ]
+    },
+    "pcb_reference": {
+      "valid": true,
+      "solids": 1,
+      "volume_mm3": 922.4508291600758,
+      "size_mm": [
+        35.0,
+        16.5,
+        1.5999999999999996
+      ]
+    }
+  },
+  "intersections_mm3": {
+    "base_lid": 0.0,
+    "base_pcb": 0.0,
+    "lid_pcb": 0.0
+  },
+  "stl": {
+    "Base_PRINT.stl": {
+      "triangles": 2212,
+      "vertices": 1108,
+      "nonmanifold_edges": 0,
+      "inconsistent_edges": 0,
+      "connected_components": 1,
+      "volume_mm3": 3186.4247868688894,
+      "bounds_mm": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          38.4,
+          25.7,
+          6.4
+        ]
+      ]
+    },
+    "Base_and_Lid_PRINT.stl": {
+      "triangles": 10900,
+      "vertices": 5444,
+      "nonmanifold_edges": 0,
+      "inconsistent_edges": 0,
+      "connected_components": 2,
+      "volume_mm3": 5653.327253981569,
+      "bounds_mm": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          84.80121,
+          25.7,
+          6.4
+        ]
+      ]
+    },
+    "Lid_PRINT.stl": {
+      "triangles": 8688,
+      "vertices": 4336,
+      "nonmanifold_edges": 0,
+      "inconsistent_edges": 0,
+      "connected_components": 1,
+      "volume_mm3": 2466.902254377401,
+      "bounds_mm": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          38.4,
+          25.7,
+          5.45
+        ]
+      ]
+    },
+    "USB_Fit_Collar_PRINT.stl": {
+      "triangles": 1684,
+      "vertices": 838,
+      "nonmanifold_edges": 0,
+      "inconsistent_edges": 0,
+      "connected_components": 1,
+      "volume_mm3": 1380.9690693604261,
+      "bounds_mm": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          11.2,
+          25.7,
+          9.2
+        ]
+      ]
+    }
+  },
+  "connector_sampling": {
+    "J1": {
+      "sample_count": 20489,
+      "result": {
+        "base": {
+          "interior_sample_hits": 0,
+          "example_hits": []
+        },
+        "lid": {
+          "interior_sample_hits": 0,
+          "example_hits": []
+        }
+      }
+    },
+    "J2": {
+      "sample_count": 2174,
+      "result": {
+        "base": {
+          "interior_sample_hits": 0,
+          "example_hits": []
+        },
+        "lid": {
+          "interior_sample_hits": 0,
+          "example_hits": []
+        }
+      }
+    }
+  },
+  "component_envelopes": {
+    "C1": {
+      "assumed_height_mm": 1.5,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "D1": {
+      "assumed_height_mm": 1.5,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "R1": {
+      "assumed_height_mm": 1.5,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "U2": {
+      "assumed_height_mm": 2.0,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "U3": {
+      "assumed_height_mm": 2.0,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "R5": {
+      "assumed_height_mm": 1.5,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "R11": {
+      "assumed_height_mm": 1.5,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "C5": {
+      "assumed_height_mm": 1.5,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "C8": {
+      "assumed_height_mm": 1.5,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "C10": {
+      "assumed_height_mm": 1.5,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "C12": {
+      "assumed_height_mm": 1.5,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "C24": {
+      "assumed_height_mm": 1.5,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "C30": {
+      "assumed_height_mm": 1.5,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "C31": {
+      "assumed_height_mm": 1.5,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "C32": {
+      "assumed_height_mm": 1.5,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "C33": {
+      "assumed_height_mm": 1.5,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "C34": {
+      "assumed_height_mm": 1.5,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "C35": {
+      "assumed_height_mm": 1.5,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "C37": {
+      "assumed_height_mm": 1.5,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "C38": {
+      "assumed_height_mm": 1.5,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "C39": {
+      "assumed_height_mm": 1.5,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "D5": {
+      "assumed_height_mm": 1.5,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "L1": {
+      "assumed_height_mm": 1.5,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "R56": {
+      "assumed_height_mm": 1.5,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "SW4": {
+      "assumed_height_mm": 2.0,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "U4": {
+      "assumed_height_mm": 2.0,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "Y1": {
+      "assumed_height_mm": 1.5,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "R6": {
+      "assumed_height_mm": 1.5,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "R4": {
+      "assumed_height_mm": 1.5,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "R10": {
+      "assumed_height_mm": 1.5,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    },
+    "C36": {
+      "assumed_height_mm": 1.5,
+      "xy_expansion_mm": 0.15,
+      "overlaps_mm3": {
+        "base": 0.0,
+        "lid": 0.0
+      }
+    }
+  },
+  "verification_limit": "BRep and triangle-mesh tests plus connector vertex/edge-midpoint/triangle-centroid sampling. Other component heights are conservative assumptions. No physical test print or measured USB confirmation.",
+  "handedness_and_feature_holes": {
+    "SW4": {
+      "center": [
+        9.5,
+        13.75
+      ],
+      "hole_clear": true
+    },
+    "D5": {
+      "center": [
+        3.0,
+        14.742999999999995
+      ],
+      "hole_clear": true
+    },
+    "D1": {
+      "center": [
+        3.0,
+        1.6809999999999974
+      ],
+      "hole_clear": true
+    },
+    "boot_mirror_rejection": true
+  },
+  "step_readback": {
+    "fit_collar.step": {
+      "valid": true,
+      "solids": 1
+    },
+    "lid.step": {
+      "valid": true,
+      "solids": 1
+    },
+    "base.step": {
+      "valid": true,
+      "solids": 1
+    },
+    "assembly_with_PCB_reference.step": {
+      "valid": true,
+      "solids": 3
+    },
+    "pcb_reference.step": {
+      "valid": true,
+      "solids": 1
+    }
+  }
+}
