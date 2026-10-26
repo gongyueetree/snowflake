@@ -1,1 +1,9 @@
-{"name":"snowflake-studio","version":"1.2.0","type":"module","private":true,"scripts":{"test":"node tests.mjs"}}
+{
+  "name": "snowflake-studio",
+  "version": "1.3.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node tests.mjs && node tests-ui.mjs"
+  }
+}
