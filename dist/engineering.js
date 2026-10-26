@@ -1,4 +1,6 @@
+import {MusicPlayer} from './music.js';
 import {t,localizedName} from './i18n.js';
+const engineeringPlayer=new MusicPlayer();let soundBusy=false;
 const compactLayout=matchMedia('(max-width:760px)');
 const componentDetails=document.querySelector('.component-disclosure');
 componentDetails.open=!compactLayout.matches;
@@ -22,7 +24,7 @@ async function refresh(){let id=++loadID;controls();$('loading').hidden=false;$(
  else if(mode==='3d'){
   
   if(!viewer){try{const {Engineering3D}=await import('./engineering-3d.js');viewer=new Engineering3D($('threeMount'),(f,b)=>selectPart(f,b));}catch(e){const {EngineeringCanvas}=await import('./engineering-canvas.js');viewer=new EngineeringCanvas($('threeMount'),(f,b)=>selectPart(f,b));}}
-  const buildKey=key,buildColor=$('materialColor').value,buildAssembly=assembly;buildQueue=buildQueue.catch(()=>{}).then(()=>viewer.build(data,buildKey,buildColor,project,buildAssembly));await buildQueue;if(id!==loadID)return;viewer.animate=$('animateLights').checked;viewer.active=true;viewer.setSide(side);viewer.resize();if(viewer.compatibility)$('viewportLabel').textContent='兼容立体视图 / 真实板框与参数化封装';if(selected)viewer.select(selected.ref,key);
+  const buildKey=key,buildColor=$('materialColor').value,buildAssembly=assembly;buildQueue=buildQueue.catch(()=>{}).then(()=>viewer.build(data,buildKey,buildColor,project,buildAssembly));await buildQueue;if(id!==loadID)return;viewer.animate=$('animateLights').checked;viewer.audioClock=()=>engineeringPlayer.clock();viewer.active=true;viewer.setSide(side);viewer.resize();if(viewer.compatibility)$('viewportLabel').textContent='兼容立体视图 / 真实板框与参数化封装';if(selected)viewer.select(selected.ref,key);
  }else{const path=`engineering/${key}-${mode==='pcb'?side:'schematic'}.svg`;const text=await(await fetch(path)).text();if(id!==loadID)return;$('drawingMount').innerHTML=text;drawSvg=$('drawingMount').querySelector('svg');drawSvg.setAttribute('preserveAspectRatio','xMidYMid meet');drawBox=drawSvg.getAttribute('viewBox').split(' ').map(Number);if(mode==='pcb'){if(side==='B'){const group=document.createElementNS('http://www.w3.org/2000/svg','g');group.id='mirror';const center=(data[key].bounds[0]+data[key].bounds[2])/2;group.setAttribute('transform',`translate(${2*center},0) scale(-1,1)`);while(drawSvg.firstChild)group.append(drawSvg.firstChild);drawSvg.append(group);}const host=drawSvg.querySelector('#mirror')||drawSvg;let hit=document.createElementNS('http://www.w3.org/2000/svg','g');hit.id='interactiveParts';for(const f of data[key].components){if(f.side!==side||!f.pads.length)continue;const [x,y,X,Y]=f.fabBounds,r=document.createElementNS('http://www.w3.org/2000/svg','rect');r.setAttribute('x',x-.3);r.setAttribute('y',y-.3);r.setAttribute('width',X-x+.6);r.setAttribute('height',Y-y+.6);r.setAttribute('transform',`translate(${f.at[0]},${f.at[1]}) rotate(${-f.at[2]})`);r.setAttribute('stroke-width','.3');r.setAttribute('data-ref',f.ref);r.style.cursor='pointer';r.addEventListener('click',e=>{if(dragMoved)return;e.stopPropagation();selectPart(f,key);});const title=document.createElementNS('http://www.w3.org/2000/svg','title');title.textContent=f.ref+' · '+f.value;r.append(title);hit.append(r);}host.append(hit);applyLayers();highlight();}applyBox();}
  if(id===loadID)$('loading').hidden=true;
  }catch(e){if(id===loadID){$('loading').textContent='预览暂时无法载入。'+(mode==='3d'?'可切换 PCB / 原理图查看工程。':'请刷新后重试。');toast(e.message||'载入失败');}}}
@@ -34,3 +36,17 @@ $('componentSearch').oninput=listParts;document.querySelectorAll('[data-mode]').
 try{const all=await Promise.all(['snowflake','rp2040'].map(async k=>[k,await(await fetch(`engineering/${k}.json`)).json()]));data=Object.fromEntries(all);$('materialColor').value=key==='snowflake'?'white':'green';boardInfo();await refresh();}catch(e){$('loading').textContent='工程数据载入失败，请刷新后重试。';toast(e.message);}
 
 window.addEventListener('languagechange',()=>{if(data[key])boardInfo();});
+
+function engineeringSoundUI(){const audible=engineeringPlayer.clock()!==null;$('engineeringSound').textContent=audible?'♫ 关闭声音':'♫ 开启声音';$('engineeringSound').setAttribute('aria-pressed',String(audible));}
+engineeringPlayer.onstatechange=engineeringSoundUI;
+$('engineeringSound').onclick=async()=>{
+ if(soundBusy)return;if(engineeringPlayer.clock()!==null){engineeringPlayer.stop();$('engineeringAudioStatus').textContent='点击开启配乐';engineeringSoundUI();return;}
+ soundBusy=true;$('engineeringSound').disabled=true;
+ try{const m=project.scene.music||{source:'demo',track:'bells',duration:project.scene.duration,offset:0,mode:'pulse'};
+ await engineeringPlayer.restore(m);const playable=project.scene.music||{...m,name:'冰晶风铃'};engineeringPlayer.play(playable,0);
+ $('engineeringAudioStatus').textContent='配乐播放中';if(viewer)viewer.audioClock=()=>engineeringPlayer.clock();
+ }catch(e){$('engineeringAudioStatus').textContent=e.message;}
+ finally{soundBusy=false;$('engineeringSound').disabled=false;engineeringSoundUI();}
+};
+document.addEventListener('visibilitychange',()=>{if(document.hidden){engineeringPlayer.stop();$('engineeringAudioStatus').textContent='点击开启配乐';engineeringSoundUI();}});
+window.addEventListener('pagehide',()=>engineeringPlayer.stop());

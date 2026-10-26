@@ -399,5 +399,15 @@ export const EN={
   "配乐不存在": "Track not found",
   "请先选择本地音频文件": "Select a local audio file first",
   "片段超出音频长度，请缩短时长或修改起点": "Clip exceeds the audio length. Shorten the duration or change the start.",
-  "请先载入配乐": "Load a track first"
+  "请先载入配乐": "Load a track first",
+  "♫ 开启声音": "♫ Enable sound",
+  "♫ 关闭声音": "♫ Mute sound",
+  "声音尚未启用，请再次点击开启声音；若仍无声，请在 Safari 中打开并检查媒体音量。": "Sound is not enabled. Tap Enable sound again. If still silent, open in Safari and check media volume.",
+  "本地配乐需重新选择音频文件，请打开选择配乐。": "Reselect your local audio file using Choose music.",
+  "配乐已保存 · 点击开启声音 · ": "Music saved · Tap Enable sound · ",
+  "本地音频需重新选择 · ": "Reselect local audio · ",
+  "点击开启配乐；首次使用播放冰晶风铃。": "Tap to enable music. Crystal Chimes plays if no track is saved.",
+  "配乐播放中": "Music playing",
+  "点击开启配乐": "Tap to enable music",
+  "3D 灯效读取本浏览器已保存项目。": "3D lighting uses the project saved in this browser."
 };

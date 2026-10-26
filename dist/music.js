@@ -22,11 +22,29 @@ export function synthesize(track,duration,rate=24000){
 export function musicKey(m){return m?JSON.stringify([m.source,m.name,m.track||'',m.duration,m.offset||0]):'';}
 export class MusicPlayer{
  context=null; buffer=null; key=''; source=null; started=0; offset=0; original=null; uploadName=''; gain=null; volumeLevel=.3;
- async enable(){if(!this.context){this.context=new (window.AudioContext||window.webkitAudioContext)();this.gain=this.context.createGain();this.gain.gain.value=this.volumeLevel;this.gain.connect(this.context.destination);}await this.context.resume();}
+ // Run directly from a click before any decoding/analysis awaits (iOS gesture requirement).
+ async enable(){
+  try{if(navigator.audioSession)navigator.audioSession.type='playback';}catch{}
+  if(!this.context||this.context.state==='closed'){
+   this.context=new (window.AudioContext||window.webkitAudioContext)();this.gain=this.context.createGain();this.gain.gain.value=this.volumeLevel;this.gain.connect(this.context.destination);
+   this.context.onstatechange=()=>this.onstatechange?.();
+  }
+  if(this.context.state==='running')return;
+  const resume=this.context.resume();
+  const unlock=this.context.createBufferSource();unlock.buffer=this.context.createBuffer(1,1,this.context.sampleRate);unlock.connect(this.gain);unlock.onended=()=>unlock.disconnect();unlock.start(0);
+  let timeout;try{await Promise.race([resume,new Promise((_,reject)=>timeout=setTimeout(()=>reject(Error('声音尚未启用，请再次点击开启声音；若仍无声，请在 Safari 中打开并检查媒体音量。')),4000))]);}finally{clearTimeout(timeout);}
+  if(this.context.state!=='running')throw Error('声音尚未启用，请再次点击开启声音；若仍无声，请在 Safari 中打开并检查媒体音量。');
+ }
+ async restore(m){
+  if(this.available(m)){await this.enable();return m;}
+  if(m?.source!=='demo')throw Error('本地配乐需重新选择音频文件，请打开选择配乐。');
+  return this.prepare(m);
+ }
+
  stop(){if(this.source){this.source.stop();this.source.disconnect();this.source=null;}}
  available(m){return this.buffer&&this.key===musicKey(m);}
  play(m,offset=0){this.stop();if(!this.available(m)||this.context.state!=='running')return;const s=this.context.createBufferSource();s.buffer=this.buffer;s.loop=true;s.connect(this.gain);this.offset=((offset%m.duration)+m.duration)%m.duration;this.started=this.context.currentTime;s.start(0,this.offset);this.source=s;}
- clock(){return this.source?(this.offset+this.context.currentTime-this.started)%this.buffer.duration:null;}
+ clock(){return this.source&&this.context?.state==='running'?(this.offset+this.context.currentTime-this.started)%this.buffer.duration:null;}
  volume(v){this.volumeLevel=v;if(this.gain)this.gain.gain.value=v;}
  async loadFile(file){await this.enable();if(file.size>20*1024*1024)throw Error('请选择不超过 20 MB 的音频');const decoded=await this.context.decodeAudioData(await file.arrayBuffer());if(decoded.duration<2||decoded.duration>300)throw Error('支持 2 秒至 5 分钟的音频，请先裁剪');this.original=decoded;this.uploadName=file.name.slice(0,100);return decoded.duration;}
  async prepare({source,track='bells',duration=8,offset=0,mode='pulse'}){

@@ -4,6 +4,6 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "test": "node tests.mjs && node tests-ui.mjs"
+    "test": "node tests.mjs && node tests-ui.mjs && node tests-music-player.mjs"
   }
 }

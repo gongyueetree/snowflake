@@ -3,7 +3,7 @@ import {LEDS,OUTLINE,PIN_MAP} from './hardware.js';
 import {CONNECTORS} from './snowflake-connectors.js';
 import {DEFAULT_SCENE,PRESETS,NAMES,TYPES,validateScene,worldLEDs,renderFrame,buildUF2,displayLight,musicSample} from './engine.js';
 import {MusicPlayer,TRACKS} from './music.js';
-const player=new MusicPlayer();let glowMode=true,exposure=1.6,presetCategory='全部',musicBusy=false;
+const player=new MusicPlayer();let glowMode=true,exposure=1.6,presetCategory='全部',musicBusy=false,soundEnabled=false;
 const $=id=>document.getElementById(id),clone=x=>JSON.parse(JSON.stringify(x));
 // Translate built-in project titles without changing saved or custom project names.
 function projectDisplayName(name){return ['我的第一束光','未命名的光'].includes(name)?localizedName(name):name;}
@@ -55,7 +55,18 @@ function draw(){
  ctx.restore();ctx.fillStyle=active?'#cae0b7':'#6c8a73';ctx.font=`${active?'500':'400'} 10px sans-serif`;ctx.textAlign='center';ctx.fillText(t(`雪花 ${String(bi+1).padStart(2,'0')}`),p.x,p.y+56*scale);ctx.textAlign='left';if(active){ctx.strokeStyle='#93bc7355';ctx.lineWidth=1;ctx.setLineDash([3,5]);ctx.strokeRect(p.x-48*scale,p.y-48*scale,96*scale,96*scale);ctx.setLineDash([]);for(let [dx,dy]of[[-48,-48],[48,-48],[-48,48],[48,48]]){ctx.fillStyle='#a1bb80';ctx.fillRect(p.x+dx*scale-2,p.y+dy*scale-2,4,4);}}});
 }
 function tick(now){let dt=Math.min((now-last)/1000,.08);last=now;if(playing){let audioTime=player.clock();if(audioTime!==null)time=audioTime;else if(!drag)time=(time+dt)%state.scene.duration;}draw();$('timeline').value=time*1000;$('timeNow').textContent=formatTime(time);let bands=state.scene.music?musicSample(state.scene.music,time).slice(1):[0,0,0];[...$('audioBars').children].forEach((bar,i)=>bar.style.height=(2+bands[i]*18)+'px');requestAnimationFrame(tick);}
-function syncAudio(){if(!playing||!state.scene.music||!player.available(state.scene.music)){player.stop();return;}player.play(state.scene.music,time);}
+function soundUI(){const audible=soundEnabled&&playing&&!!player.source&&player.context?.state==='running';$('soundBtn').textContent=audible?'♫ 关闭声音':'♫ 开启声音';$('soundBtn').setAttribute('aria-pressed',String(audible));}
+player.onstatechange=soundUI;
+function syncAudio(){if(!soundEnabled||!playing||!state.scene.music||!player.available(state.scene.music)){player.stop();soundUI();return;}player.play(state.scene.music,time);soundUI();}
+$('soundBtn').onclick=async()=>{
+ if(musicBusy)return;
+ if(soundEnabled&&player.clock()!==null){soundEnabled=false;syncAudio();return;}
+ if(!state.scene.music){await activateMusic({source:'demo',track:'bells',duration:state.scene.duration,offset:0,mode:'pulse'});return;}
+ const before=JSON.stringify(state);musicBusy=true;$('soundBtn').disabled=true;
+ try{await player.restore(state.scene.music);if(JSON.stringify(state)!==before)throw Error('分析期间项目已改变，请重新应用配乐');soundEnabled=true;playing=true;playUI();syncUI();syncAudio();}
+ catch(e){soundEnabled=false;toast(e.message);if(state.scene.music?.source==='upload')$('musicBtn').click();}
+ finally{musicBusy=false;$('soundBtn').disabled=false;soundUI();}
+};
 
 function formatTime(t){return '00:'+String(Math.floor(t)).padStart(2,'0');}
 function remapTargets(oldBoards){for(const l of state.scene.layers){if(l.target==='all')continue;let id=oldBoards[Number(l.target)-1]?.id,idx=state.boards.findIndex(b=>b.id===id);l.target=idx<0?'all':String(idx+1);}}
@@ -70,8 +81,8 @@ function syncUI(){
  let b=state.boards.find(b=>b.id===selected);$('selectionBar').hidden=!b;$('selectionName').textContent='雪花 '+String(state.boards.indexOf(b)+1).padStart(2,'0');$('undoBtn').disabled=!history.length;$('redoBtn').disabled=!future.length;
  $('palette').replaceChildren();state.scene.layers[0].colors.forEach((c,i)=>{let input=document.createElement('input');input.type='color';input.value=c;input.setAttribute('aria-label','主题颜色 '+(i+1));input.onchange=()=>{snapshot();state.scene.layers[0].colors[i]=input.value;changed();};$('palette').append(input);});
  $('duration').disabled=!!state.scene.music;$('duration').title=state.scene.music?'请在配乐面板中调整片段时长':'';
- $('musicTitle').textContent=state.scene.music?'♫ '+(state.scene.music.source==='demo'?localizedName(state.scene.music.name):state.scene.music.name):t('给雪花配一段音乐');$('musicSubtitle').textContent=state.scene.music?(player.available(state.scene.music)?'音频已就绪 · ':'节奏数据已保留 · 需重新载入声音 · ')+({'pulse':'音量律动','spectrum':'三频段枝丫','radial':'低频绽放'}[state.scene.music.mode])+' · '+state.scene.duration+' 秒':'3 段原创配乐 · 本地音频节奏分析 · 可烘焙到固件';
- $('audioDownload').disabled=!player.available(state.scene.music);$('musicExportNote').hidden=!state.scene.music;
+ $('musicTitle').textContent=state.scene.music?'♫ '+(state.scene.music.source==='demo'?localizedName(state.scene.music.name):state.scene.music.name):t('给雪花配一段音乐');$('musicSubtitle').textContent=state.scene.music?(player.available(state.scene.music)?'音频已就绪 · ':(state.scene.music.source==='demo'?'配乐已保存 · 点击开启声音 · ':'本地音频需重新选择 · '))+({'pulse':'音量律动','spectrum':'三频段枝丫','radial':'低频绽放'}[state.scene.music.mode])+' · '+state.scene.duration+' 秒':'3 段原创配乐 · 本地音频节奏分析 · 可烘焙到固件';
+ soundUI();$('audioDownload').disabled=!player.available(state.scene.music);$('musicExportNote').hidden=!state.scene.music;
  if(!player.available(state.scene.music))player.stop();
  const preset=PRESETS.find(p=>p.name===state.scene.name);$('presetAttribution').replaceChildren();if(preset){let a=document.createElement('a');a.href=preset.sourceUrl;a.target='_blank';a.rel='noopener';a.textContent='灵感参考：'+preset.reference+' ↗';$('presetAttribution').append(a,document.createTextNode(' · 已按雪花结构独立实现'));}renderPresetList();
  $('pinSelect').value=state.pin;$('pinDescription').textContent=`J2 · Pin ${PIN_MAP[state.pin]} · GP${state.pin}`;
@@ -100,8 +111,8 @@ $('addBtn').onclick=()=>addBoard();$('addCard').onclick=()=>addBoard();$('rotate
 $('undoBtn').onclick=undo;$('redoBtn').onclick=redo;$('labelsBtn').onclick=()=>{labels=!labels;$('labelsBtn').classList.toggle('on',labels);};$('wiresBtn').onclick=()=>{wires=!wires;$('wiresBtn').classList.toggle('on',wires);};
 $('zoomIn').onclick=()=>{view.zoom=Math.min(4,view.zoom*1.2);zoomUI();};$('zoomOut').onclick=()=>{view.zoom=Math.max(.2,view.zoom/1.2);zoomUI();};$('fitBtn').onclick=fit;
 function playUI(){$('playBtn').textContent=playing?'Ⅱ':'▶';$('playBtn').setAttribute('aria-label',playing?'暂停':'播放');}
-async function togglePlayback(){playing=!playing;if(playing&&state.scene.music){await player.enable();}syncAudio();playUI();}
-$('playBtn').onclick=togglePlayback;$('resetTime').onclick=()=>{time=0;syncAudio();};$('timeline').oninput=e=>{playing=false;time=+e.target.value/1000;player.stop();playUI();};
+async function togglePlayback(){playing=!playing;try{if(playing&&soundEnabled&&state.scene.music)await player.restore(state.scene.music);}catch(e){soundEnabled=false;toast(e.message);}syncAudio();playUI();}
+$('playBtn').onclick=togglePlayback;$('resetTime').onclick=()=>{time=0;syncAudio();};$('timeline').oninput=e=>{playing=false;time=+e.target.value/1000;player.stop();playUI();soundUI();};
 
 $('brightness').onpointerdown=()=>snapshot();$('brightness').onkeydown=e=>{if(e.key.startsWith('Arrow'))snapshot();};$('brightness').oninput=e=>{state.scene.brightness=+e.target.value;$('brightnessText').textContent=e.target.value+'%';persist();};$('brightness').onchange=syncUI;
 $('duration').onchange=e=>{snapshot();state.scene.duration=+e.target.value;time=0;changed();};$('projectName').maxLength=80;$('projectName').onchange=e=>{snapshot();state.name=e.target.value.trim()||'未命名的光';changed();};
@@ -114,7 +125,7 @@ $('glowBtn').onclick=()=>{glowMode=true;$('exposure').disabled=false;$('glowBtn'
 $('musicBtn').onclick=()=>{const m=state.scene.music;$('musicSource').value=m?(m.source==='demo'?m.track:'upload'):'bells';$('musicMode').value=m?.mode||'pulse';if(!Array.from($('musicDuration').options).some(o=>+o.value===state.scene.duration))$('musicDuration').add(new Option(state.scene.duration+' 秒',state.scene.duration));$('musicDuration').value=state.scene.duration;$('audioOffset').value=m?.offset||0;$('uploadControls').hidden=$('musicSource').value!=='upload';$('musicDialog').showModal();};
 $('musicSource').onchange=()=>{$('uploadControls').hidden=$('musicSource').value!=='upload';};
 $('audioFile').onchange=async e=>{const file=e.target.files[0];if(!file)return;musicBusy=true;$('applyMusic').disabled=true;$('musicStatus').textContent='正在本地解码音频…';try{let duration=await player.loadFile(file);$('audioFileInfo').textContent=`${file.name} · ${duration.toFixed(1)} 秒 · 本地已载入`;$('musicStatus').textContent='选择片段起点与时长，再应用试听。';}catch(err){$('musicStatus').textContent=err.message;}finally{musicBusy=false;$('applyMusic').disabled=false;}};
-async function activateMusic(config){if(musicBusy)return;musicBusy=true;const before=JSON.stringify(state);$('applyMusic').disabled=true;$('musicStatus').textContent='正在分析音量和三个频段…';try{const m=await player.prepare(config);if(JSON.stringify(state)!==before)throw Error('分析期间项目已改变，请重新应用配乐');snapshot();state.scene.music=m;state.scene.duration=config.duration;time=0;playing=true;playUI();changed();$('musicStatus').textContent='已应用；播放、暂停和时间轴与音乐同步。';$('musicDialog').close();}catch(e){$('musicStatus').textContent=e.message;toast(e.message);}finally{musicBusy=false;$('applyMusic').disabled=false;}}
+async function activateMusic(config){if(musicBusy)return;musicBusy=true;const before=JSON.stringify(state);$('applyMusic').disabled=true;$('musicStatus').textContent='正在分析音量和三个频段…';try{const m=await player.prepare(config);if(JSON.stringify(state)!==before)throw Error('分析期间项目已改变，请重新应用配乐');snapshot();state.scene.music=m;state.scene.duration=config.duration;time=0;playing=true;soundEnabled=true;playUI();changed();$('musicStatus').textContent='已应用；播放、暂停和时间轴与音乐同步。';$('musicDialog').close();}catch(e){$('musicStatus').textContent=e.message;toast(e.message);}finally{musicBusy=false;$('applyMusic').disabled=false;}}
 $('applyMusic').onclick=()=>activateMusic({source:$('musicSource').value==='upload'?'upload':'demo',track:$('musicSource').value,duration:+$('musicDuration').value,offset:+$('audioOffset').value,mode:$('musicMode').value});
 $('removeMusic').onclick=()=>{snapshot();delete state.scene.music;player.stop();changed();$('musicDialog').close();toast('配乐已移除');};$('musicVolume').oninput=e=>player.volume(+e.target.value/100);$('audioDownload').onclick=()=>{try{download(player.wav(),'snowflake-music.wav','audio/wav');}catch(e){toast(e.message);}};
 
@@ -144,3 +155,7 @@ document.querySelector('.engineering-link').addEventListener('click',persistNow)
 
 // Section shortcuts leave every editor control reachable on small screens.
 document.querySelectorAll('[data-jump]').forEach(button=>button.onclick=()=>{if(button.dataset.openTab)document.querySelector(`[data-tab="${button.dataset.openTab}"]`).click();$(button.dataset.jump).scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});});
+
+// Stop when leaving/backgrounding; return to an explicit sound action after interruption.
+document.addEventListener('visibilitychange',()=>{if(document.hidden){if(player.clock()!==null)time=player.clock();soundEnabled=false;player.stop();soundUI();}});
+window.addEventListener('pagehide',()=>player.stop());
