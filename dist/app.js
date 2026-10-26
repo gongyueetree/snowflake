@@ -5,6 +5,8 @@ import {DEFAULT_SCENE,PRESETS,NAMES,TYPES,validateScene,worldLEDs,renderFrame,bu
 import {MusicPlayer,TRACKS} from './music.js';
 const player=new MusicPlayer();let glowMode=true,exposure=1.6,presetCategory='全部',musicBusy=false;
 const $=id=>document.getElementById(id),clone=x=>JSON.parse(JSON.stringify(x));
+// Translate built-in project titles without changing saved or custom project names.
+function projectDisplayName(name){return ['我的第一束光','未命名的光'].includes(name)?localizedName(name):name;}
 let state={version:1,name:'我的第一束光',pin:20,boards:[{id:1,x:-92,y:15,rotation:0},{id:2,x:0,y:-25,rotation:0},{id:3,x:92,y:15,rotation:0}],scene:clone(DEFAULT_SCENE)};
 let selected=2,history=[],future=[],time=0,playing=true,labels=false,wires=true,view={x:0,y:0,zoom:1},apiKey='',model='gemini-2.5-flash',busy=false,drag=null,width=1,height=1,baseScale=1,last=performance.now(),toastTimer,saveTimer;
 function validateProject(p){if(p?.version!==1||typeof p.name!=='string'||p.name.length>80||!Number.isInteger(p.pin)||!(p.pin in PIN_MAP)||!Array.isArray(p.boards)||p.boards.length<1||p.boards.length>12)throw Error('不是受支持的雪花项目');let ids=new Set();for(const b of p.boards){if(!Number.isInteger(b.id)||ids.has(b.id)||['x','y','rotation'].some(k=>!Number.isFinite(b[k])||Math.abs(b[k])>10000))throw Error('灯板数据无效');ids.add(b.id);}validateScene(p.scene,p.boards.length);return clone(p);}
@@ -60,7 +62,7 @@ function remapTargets(oldBoards){for(const l of state.scene.layers){if(l.target=
 function syncUI(){
  time=((time%state.scene.duration)+state.scene.duration)%state.scene.duration;$('timeNow').textContent=formatTime(time);
  $('removeBtn').disabled=state.boards.length<=1;$('deleteBtn').disabled=state.boards.length<=1;$('addBtn').disabled=state.boards.length>=12;$('addCard').disabled=state.boards.length>=12;$('copyBtn').disabled=state.boards.length>=12;
- $('projectName').value=state.name;$('boardCount').textContent=state.boards.length;$('ledCount').textContent=state.boards.length*37;$('effectName').textContent=localizedName(state.scene.name);$('brightness').value=state.scene.brightness;$('brightnessText').textContent=state.scene.brightness+'%';
+ $('projectName').value=projectDisplayName(state.name);$('boardCount').textContent=state.boards.length;$('ledCount').textContent=state.boards.length*37;$('effectName').textContent=localizedName(state.scene.name);$('brightness').value=state.scene.brightness;$('brightnessText').textContent=state.scene.brightness+'%';
  if(!Array.from($('duration').options).some(o=>+o.value===state.scene.duration)){$('duration').add(new Option(state.scene.duration+' 秒',state.scene.duration));}$('duration').value=state.scene.duration;
  $('durationText').textContent=formatTime(state.scene.duration);$('timeline').max=state.scene.duration*1000;for(let i=1;i<=4;i++)$('mark'+i).textContent=+(state.scene.duration*i/4).toFixed(1)+'s';
  $('effectDescription').textContent=state.scene.layers.map(l=>NAMES[l.type]).join(' + ')+' · '+state.scene.fps+' fps';

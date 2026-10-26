@@ -1,4 +1,5 @@
 export const EN={
+  "我的第一束光": "My First Light",
   "Snowflake Studio · 雪花灯创作台": "Snowflake Studio · Create with light",
   "工程与实物预览 · Snowflake Studio": "Hardware Explorer · Snowflake Studio",
   "工程与实物预览 ↗": "Hardware explorer ↗",

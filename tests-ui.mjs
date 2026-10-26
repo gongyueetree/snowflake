@@ -17,3 +17,16 @@ canvas.onpointerdown(event(1,200,190));canvas.onpointermove(event(1,220,210));ca
 canvas.onpointerdown(event(1,220,210));canvas.onpointerdown(event(2,260,210));canvas.onpointermove(event(2,300,210));assert.equal(context.view.zoom,2);assert.equal(context.state.boards[0].x,20,'Pinch must not drag the selected board');assert.equal(context.snapshots,1);canvas.onpointerup(event(2,300,210));canvas.onpointermove(event(1,240,230));assert.equal(context.state.boards[0].x,20,'Remaining finger must not jump back into dragging');canvas.onpointercancel(event(1,240,230));
 canvas.onpointerdown(event(3,0,0));canvas.onpointermove(event(3,20,20));canvas.onpointerup(event(3,20,20));assert.equal(context.snapshots,1,'Panning must not change project history');
 console.log('PASS: all 20 presets translated; pointer tap, board drag, pinch, cancellation, and pan preserve project/undo semantics.');
+
+// Built-in project titles localize; arbitrary user names and stored names remain unchanged.
+const titleFunction=source.match(/function projectDisplayName\(name\)\{[^\n]+\}/)[0];
+let uiLanguage='en';const titleContext=vm.createContext({localizedName:name=>uiLanguage==='en'?(EN[name]||name):name});
+vm.runInContext(titleFunction,titleContext);
+const savedProject={name:'我的第一束光'};
+assert.equal(titleContext.projectDisplayName(savedProject.name),'My First Light');
+assert.equal(titleContext.projectDisplayName('未命名的光'),'Untitled light');
+assert.equal(titleContext.projectDisplayName('我的圣诞雪花'),'我的圣诞雪花');
+assert.equal(titleContext.projectDisplayName('Aurora Forest'),'Aurora Forest');
+uiLanguage='zh';assert.equal(titleContext.projectDisplayName(savedProject.name),'我的第一束光');
+assert.equal(savedProject.name,'我的第一束光');
+console.log('PASS: default/untitled project names follow UI language; custom names and stored title remain intact.');
